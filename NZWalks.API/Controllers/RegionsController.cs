@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NZWalks.API.Data;
 using NZWalks.API.Models.Domain;
 using NZWalks.API.Models.DTO;
@@ -19,10 +20,10 @@ namespace NZWalks.API.Controllers
         //Get All Regions
         //GET: https://localhost:port/api/regions
         [HttpGet]
-        public IActionResult GetAll() 
-        { 
+        public async Task<IActionResult> GetAll() 
+        {
             //Get data from database - domain models
-            var regionsDomain = dbContext.Regions.ToList();
+            var regionsDomain = await dbContext.Regions.ToListAsync();
 
             //Map domain modes to DTOs
             var regionsDto = new List<RegionDto>();
@@ -45,10 +46,10 @@ namespace NZWalks.API.Controllers
         //Get a single region
         //GET: https://localhost:port/api/regions/{id}
         [HttpGet("{id:Guid}")]
-        public IActionResult GetById([FromRoute] Guid id)
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             //var region = dbContext.Regions.Find(id);
-            var regionDomain = dbContext.Regions.FirstOrDefault(r => r.Id == id);
+            var regionDomain = await dbContext.Regions.FirstOrDefaultAsync(r => r.Id == id);
 
             if (regionDomain == null)
             {
@@ -68,7 +69,7 @@ namespace NZWalks.API.Controllers
         //Post to create a new region
         //POST: https://localhost:port/api/regions
         [HttpPost]
-        public IActionResult Create([FromBody] AddRegionRequestDto addRegionRequestDto)
+        public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             //Map or Convert DTO to Domain model
             var regionDomainModel = new Region
@@ -79,8 +80,8 @@ namespace NZWalks.API.Controllers
             };
 
             //Use Domain model to create Region
-            dbContext.Regions.Add(regionDomainModel);
-            dbContext.SaveChanges();
+            await dbContext.Regions.AddAsync(regionDomainModel);
+            await dbContext.SaveChangesAsync();
 
             //Map Domain mode back to DTO
             
@@ -97,10 +98,10 @@ namespace NZWalks.API.Controllers
         //Update a single region
         //PUT: https://localhost:port/api/regions/{id}
         [HttpPut("{id:Guid}")]
-        public IActionResult Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
             //Check if resource exists
-            var regionDomainModel = dbContext.Regions.FirstOrDefault(r => r.Id == id);
+            var regionDomainModel = await dbContext.Regions.FirstOrDefaultAsync(r => r.Id == id);
 
             if (regionDomainModel == null)
             {
@@ -111,7 +112,7 @@ namespace NZWalks.API.Controllers
             regionDomainModel.Name = updateRegionRequestDto.Name;
             regionDomainModel.RegionImageUrl = updateRegionRequestDto.RegionImageUrl;
 
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
 
             //Convert Domain Model to DTO
             var regionDto = new RegionDto
@@ -127,10 +128,10 @@ namespace NZWalks.API.Controllers
         //Delete a single region
         //DELETE: https://localhost:port/api/regions/{id}
         [HttpDelete("{id:Guid}")]
-        public IActionResult Delete([FromRoute] Guid id)
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             //var region = dbContext.Regions.Find(id);
-            var regionDomain = dbContext.Regions.FirstOrDefault(r => r.Id == id);
+            var regionDomain = await dbContext.Regions.FirstOrDefaultAsync(r => r.Id == id);
 
             if (regionDomain == null)
             {
@@ -138,7 +139,7 @@ namespace NZWalks.API.Controllers
             }
 
             dbContext.Regions.Remove(regionDomain);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
 
             return Ok();
         }
