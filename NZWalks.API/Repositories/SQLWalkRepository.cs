@@ -63,7 +63,7 @@ namespace NZWalks.API.Repositories
                 }
             }
 
-            //Pagination
+            //Pagination+
             var skipResults = (pageNumber - 1) * pageSize;
 
 
