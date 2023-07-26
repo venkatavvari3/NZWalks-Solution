@@ -104,9 +104,6 @@ namespace NZWalks.API.Controllers
                 return NotFound();
             }
 
-            dbContext.Regions.Remove(regionDomainModel);
-            await dbContext.SaveChangesAsync();
-
             //Return DTO
             return Ok(mapper.Map<RegionDto>(regionDomainModel));
         }
