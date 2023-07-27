@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NZWalks.API.CustomActionFilters;
@@ -28,6 +29,7 @@ namespace NZWalks.API.Controllers
         //Get All Regions
         //GET: https://localhost:port/api/regions
         [HttpGet]
+        [Authorize(Roles ="Reader")]
         public async Task<IActionResult> GetAll() 
         {
             //Get data from database - domain models
@@ -40,7 +42,9 @@ namespace NZWalks.API.Controllers
 
         //Get a single region
         //GET: https://localhost:port/api/regions/{id}
-        [HttpGet("{id:Guid}")]
+        [HttpGet]
+        [Route("{id:Guid}")]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             var regionDomain = await regionRepository.GetByIdAsync(id);
@@ -58,6 +62,7 @@ namespace NZWalks.API.Controllers
         //POST: https://localhost:port/api/regions
         [HttpPost]
         [ValidateModelAttributes]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             
@@ -77,8 +82,10 @@ namespace NZWalks.API.Controllers
 
         //Update a single region
         //PUT: https://localhost:port/api/regions/{id}
-        [HttpPut("{id:Guid}")]
+        [HttpPut]
+        [Route("{id:Guid}")]
         [ValidateModelAttributes]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
 
@@ -101,7 +108,9 @@ namespace NZWalks.API.Controllers
 
         //Delete a single region
         //DELETE: https://localhost:port/api/regions/{id}
-        [HttpDelete("{id:Guid}")]
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        [Authorize(Roles = "Writer,Reader")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var regionDomainModel = await regionRepository.DeleteAsync(id);
