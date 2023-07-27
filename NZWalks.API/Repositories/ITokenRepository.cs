@@ -2,7 +2,7 @@
 
 namespace NZWalks.API.Repositories
 {
-    public interface ItokenRepository
+    public interface ITokenRepository
     {
         string CreateJWTToken(IdentityUser user, List<string> roles);
     }
